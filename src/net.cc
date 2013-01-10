@@ -202,20 +202,19 @@ Callback::RecvOperationCallback2nd(
         void *ptr, unsigned int size,
         unsigned int nmemb, void *stream)
 {
-
-  unsigned int recv_size = size * nmemb;
-  SendRecvBuffer *recv_buffer = (SendRecvBuffer *)stream;
- 
-  recv_buffer->ptr = (char *)realloc(recv_buffer->ptr,
-          recv_buffer->allocated + recv_size + 1);
-  if (recv_buffer->ptr == NULL) {
-    /* out of memory! */ 
-    exit(EXIT_FAILURE);
-  }
-  memcpy(&(recv_buffer->ptr[recv_buffer->allocated]), ptr, recv_size);
-  recv_buffer->allocated += recv_size;
-  recv_buffer->ptr[recv_buffer->allocated] = 0;
-  return recv_size;
+    unsigned int recv_size = size * nmemb;
+    SendRecvBuffer *recv_buffer = (SendRecvBuffer *)stream;
+    
+    recv_buffer->ptr = (char *)realloc(recv_buffer->ptr,
+            recv_buffer->allocated + recv_size + 1);
+    if (recv_buffer->ptr == NULL) {
+        /* out of memory! */ 
+        exit(EXIT_FAILURE);
+    }
+    memcpy(&(recv_buffer->ptr[recv_buffer->allocated]), ptr, recv_size);
+    recv_buffer->allocated += recv_size;
+    recv_buffer->ptr[recv_buffer->allocated] = 0;
+    return recv_size;
 }
 
 unsigned int
@@ -255,75 +254,37 @@ void CurlOperation::DoRequest(
     if (curl != NULL) {
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, static_cast<CURLoption>(CURL_HTTP_VERSION_1_1), 1L);
-        if (method == HTTP_PUT || method == HTTP_DELETE) {
-            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
-        } else if (method  == HTTP_POST) {
-            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, send_buffer->ptr);
-        } else if (method == HTTP_GET) {
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
+        if (method == HTTP_GET) {
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback2nd);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
-            curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, Callback::HeaderOperationCallback);
-            curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_buffer);
-            if (http_headers != NULL) {
-                curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
-            }
-            // curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
-            // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-            curl_easy_perform(curl);
-            curl_easy_cleanup(curl);
-            return;
-        }
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
-        curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, Callback::HeaderOperationCallback);
-        curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_buffer);
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
-        //curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
-}
-
-void CurlOperation::DoRequest2nd(const std::string method,
-        const std::string resource,
-        const std::string url,
-        struct curl_slist *http_headers,
-        void *user_data)
-{
-    assert(user_data != NULL);
-
-    CURL *curl = NULL;
-    SessionBuffer *params = (SessionBuffer *)user_data;
-
-    SendRecvBuffer *send_buffer = params->send_buffer();
-    SendRecvBuffer *recv_buffer = params->recv_buffer();
-    HeaderBuffer *header_buffer = params->header_buffer();
-
-    curl = curl_easy_init();
-    if (curl != NULL) {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, static_cast<CURLoption>(CURL_HTTP_VERSION_1_1), 1L);
-        if (method == HTTP_PUT) {
+        } else if (method == HTTP_PUT) {
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
             curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
             curl_easy_setopt(curl, CURLOPT_INFILESIZE, send_buffer->allocated);
             curl_easy_setopt(curl, CURLOPT_READFUNCTION, Callback::SendOperationCallback2nd);
             curl_easy_setopt(curl, CURLOPT_READDATA, send_buffer);
-        } 
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback2nd);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
+        } else if (method  == HTTP_POST) {
+            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, send_buffer->ptr);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
+        } else if (method == HTTP_DELETE) {
+            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
+        }
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, Callback::HeaderOperationCallback);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_buffer);
-        if (http_headers != NULL) {
-                curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
-        }
+        if (http_headers != NULL)
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
         //curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
         //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }
+    return;
 }
 
 }
