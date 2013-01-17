@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "net.h"
+#include "Net.h"
 
 namespace neo4jcpp {
 
@@ -98,7 +98,7 @@ SessionBuffer::~SessionBuffer()
 {
     if (send_buffer_ != NULL) {
         if (send_buffer_->ptr != NULL) {
-            delete send_buffer_->ptr;
+            delete[] send_buffer_->ptr;
             send_buffer_->ptr = NULL;
         }
         free(send_buffer_);
@@ -107,11 +107,16 @@ SessionBuffer::~SessionBuffer()
 
     if (recv_buffer_!= NULL) {
         if (recv_buffer_->ptr != NULL) {
-            delete recv_buffer_->ptr;
+            delete[] recv_buffer_->ptr;
             recv_buffer_->ptr = NULL;
         }
         free(recv_buffer_);
         recv_buffer_= NULL;
+    }
+
+    if (header_buffer_ != NULL) {
+        free(header_buffer_);
+        header_buffer_ = NULL;
     }
 }
 
@@ -236,7 +241,6 @@ Callback::HeaderOperationCallback(
 
 void CurlOperation::DoRequest(
         const std::string method,
-        const std::string resource,
         const std::string url,
         struct curl_slist *http_headers,
         void *user_data)
@@ -265,7 +269,8 @@ void CurlOperation::DoRequest(
             curl_easy_setopt(curl, CURLOPT_READDATA, send_buffer);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
-        } else if (method  == HTTP_POST) {
+        } else if (method  == HTTP_POST || method == HTTP_PUT) {
+            // I added a duplicate PUT handler here for purpose.
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, send_buffer->ptr);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Callback::RecvOperationCallback);
@@ -279,8 +284,8 @@ void CurlOperation::DoRequest(
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_buffer);
         if (http_headers != NULL)
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
-        //curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }

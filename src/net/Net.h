@@ -20,6 +20,8 @@
 #ifndef _NEO4JCPP_NET_H_
 #define _NEO4JCPP_NET_H_
 
+#include <stdlib.h>
+
 #include <string>
 
 #include <curl/curl.h>
@@ -36,13 +38,13 @@
 namespace neo4jcpp {
 
 struct SendRecvBuffer {
-    char *ptr; //< 缓冲区首指针 /
-    unsigned int left; //< 缓冲区剩余大小 /
-    unsigned int allocated; //< 缓冲区总大小 /
+    char *ptr;
+    unsigned int left;
+    unsigned int allocated;
 };
 
 struct HeaderBuffer {
-    unsigned short code; //< 返回码 /
+    unsigned short code;
 };
 
 class SessionBuffer {
@@ -81,9 +83,9 @@ public:
     ~SessionBuffer();
 
 private:
-    SendRecvBuffer *send_buffer_; //< 发送缓冲区 /
-    SendRecvBuffer *recv_buffer_; //< 接收缓冲区 /
-    HeaderBuffer   *header_buffer_; //< 头部缓冲区 /
+    SendRecvBuffer *send_buffer_;
+    SendRecvBuffer *recv_buffer_;
+    HeaderBuffer   *header_buffer_;
     
 private:
     SessionBuffer(const SessionBuffer&);
@@ -116,13 +118,6 @@ public:
 class CurlOperation {
 public:
     static void DoRequest(const std::string method,
-            const std::string resource,
-            const std::string url,
-            struct curl_slist *http_headers,
-            void *user_data);
-    
-    static void DoRequest2nd(const std::string method,
-            const std::string resource,
             const std::string url,
             struct curl_slist *http_headers,
             void *user_data);
