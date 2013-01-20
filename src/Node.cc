@@ -79,14 +79,15 @@ void Node::AddProperty(std::string key, PropertyValue value)
         buffer->UpdateSendBuffer("\"\"");
     }
 
-	http_headers = curl_slist_append(http_headers, header_accept.c_str());
-	http_headers = curl_slist_append(http_headers, header_content_type.c_str());
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_content_type.c_str());
     Net::DoRequest(HTTP_PUT, url, http_headers, buffer);
     if (buffer->header_buffer()->code == 204);
     // clean ups.
     delete buffer;
     curl_slist_free_all(http_headers);
 }
+
 void Node::ClearProperties()
 {
     struct curl_slist *http_headers = NULL;
@@ -95,7 +96,7 @@ void Node::ClearProperties()
 
     SessionBuffer *buffer = new SessionBuffer(0, 64);
 
-	http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
     Net::DoRequest(HTTP_DELETE, url, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 204);
@@ -113,7 +114,7 @@ const PropertyValue Node::GetProperty(std::string key) const
 
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
-	http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
     Net::DoRequest(HTTP_PUT, url, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 200) {
@@ -147,7 +148,7 @@ const PropertyValue& Node::GetProperty(std::string key,
 
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
-	http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
     Net::DoRequest(HTTP_PUT, url, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 200) {
@@ -179,7 +180,7 @@ bool Node::HasProperty(std::string key) const
 
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
-	http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
     Net::DoRequest(HTTP_GET, url, http_headers, buffer);
     if (buffer->header_buffer()->code == 200) {
         ret = true;
@@ -191,6 +192,7 @@ bool Node::HasProperty(std::string key) const
     curl_slist_free_all(http_headers);
     return ret;
 }
+
 void Node::RemoveProperty(std::string key)
 {
     if (key.length() == 0) return;
@@ -201,7 +203,7 @@ void Node::RemoveProperty(std::string key)
 
     SessionBuffer *buffer = new SessionBuffer(0, 64);
 
-	http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
     Net::DoRequest(HTTP_DELETE, url, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 204);
