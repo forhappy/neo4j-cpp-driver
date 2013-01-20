@@ -108,4 +108,4 @@ private:
 };
 
 }
-#endif // _NEO4JCPP_GRAPHDATABASESERVICE_H_
+#endif // _NEO4JCPP_GRAPHDATABASE_H_
