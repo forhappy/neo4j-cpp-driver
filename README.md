@@ -1,6 +1,7 @@
 neo4j-cpp-driver
 ================
-Neo4j cpp driver, under heavy development and not workable right now.
+Neo4j cpp driver, under heavy development and not stable right now,
+some of the GraphDatabase's API may change in future.
 
 License
 =======
@@ -20,4 +21,3 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301 USA
-=======
