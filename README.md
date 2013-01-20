@@ -3,6 +3,28 @@ neo4j-cpp-driver
 Neo4j cpp driver, under heavy development and not stable right now,
 some of the GraphDatabase's API may change in future.
 
+Example
+=======
+
+GraphDatabase
+-------------
+        int main(int argc, const char *argv[])
+        {
+            GraphDatabase graphdb("http://127.0.0.1:7474");
+            graphdb.Connect();
+        #if 1
+            PropertyValue value("hello");
+            Property p;
+            p.AddProperty("hi", value);
+            Node node = graphdb.CreateNode(p);
+        #else
+            Node node = graphdb.CreateNode();
+        #endif
+            std::cout << node.GetID() << std::endl;
+            std::cout << node.GetSelfURI() << std::endl;
+            return 0;
+        }
+
 License
 =======
 Copyright (c) 2012-2013 Fu Haiping haipingf AT gmail DOT com
