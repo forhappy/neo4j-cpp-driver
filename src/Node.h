@@ -19,8 +19,11 @@
 #ifndef _NEO4JCPP_NODE_H_
 #define _NEO4JCPP_NODE_H_
 
+#include "AbstractProperty.h"
+
 namespace neo4jcpp {
 
+class AbstractProperty;
 class PropertyValue;
 class Relationship;
 class RelationshipType;

@@ -30,28 +30,28 @@ class AbstractProperty {
 public:
     // Associates the specified property value with
     // the specified key in this Property map.
-    void AddProperty(std::string key, PropertyValue value) = 0;
+    virtual void AddProperty(std::string key, PropertyValue value) = 0;
 
     // Removes all of the mappings from this property map.
-    void Clear() = 0;
+    virtual void ClearProperties() = 0;
 
     // Returns the PropertyValue to which the specified key
     // is mapped.
-    const PropertyValue GetProperty(std::string key) const = 0;
+    virtual const PropertyValue GetProperty(std::string key) const = 0;
     
     // Returns the PropertyValue to which the specified key
     // is mapped, default_value will be returned if no property
     // was associated with the given key.
-    const PropertyValue& GetProperty(std::string key,
+    virtual const PropertyValue& GetProperty(std::string key,
             PropertyValue& default_value) const = 0;
 
     // Returns true if this property map contains a mapping
     // for the specified key.
-    bool HasProperty(std::string key) const = 0;
+    virtual bool HasProperty(std::string key) const = 0;
 
     // Remove the mapping for a key from this Property map
     // if it is present.
-    void RemoveProperty(std::string key) = 0;
+    virtual void RemoveProperty(std::string key) = 0;
 };
 
 }

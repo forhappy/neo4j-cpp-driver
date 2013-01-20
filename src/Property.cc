@@ -30,7 +30,7 @@ void Property::AddProperty(std::string key, PropertyValue value)
     properties_.insert(std::pair<std::string, PropertyValue>(key, value));
 }
 
-void Property::Clear()
+void Property::ClearProperties()
 {
     properties_.clear();
 }

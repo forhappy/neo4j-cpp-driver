@@ -1,5 +1,4 @@
-/* RelationshipType class.
- *
+/*
  * Copyright (c) 2012-2013 Fu Haiping <haipingf@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -16,18 +15,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+#ifndef _NEO4JCPP_NEO4J_H_
+#define _NEO4JCPP_NEO4J_H_
 
-#ifndef _NEO4JCPP_RELATIONSHIPTYPE_H_
-#define _NEO4JCPP_RELATIONSHIPTYPE_H_
-#include <string>
+#endif // _NEO4JCPP_NEO4JHPP_H_ 
 
-namespace neo4jcpp {
-
-class RelationshipType {
-public:
-    const std::string Name() const {}
-};
-
-}
-
-#endif // _NEO4JCPP_RELATIONSHIPTYPE_H_

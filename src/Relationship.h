@@ -20,4 +20,10 @@
 #ifndef _NEO4JCPP_RELATIONSHIP_H_
 #define _NEO4JCPP_RELATIONSHIP_H_
 
+namespace neo4jcpp {
+
+class Relationship {
+};
+
+}
 #endif // _NEO4JCPP_RELATIONSHIP_H_

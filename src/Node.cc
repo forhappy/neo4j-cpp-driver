@@ -24,7 +24,12 @@
 
 #include <curl/curl.h>
 
+#include "Util.h"
 #include "Node.h"
+#include "Relationship.h"
+#include "Property.h"
+#include "PropertyValue.h"
+#include "RelationshipType.h"
 #include "net/Net.h"
 #include "rapidjson/document.h"
 #include "rapidjson/filestream.h"
@@ -54,7 +59,7 @@ void Node::AddProperty(std::string key, PropertyValue value)
         char strchar[8] = {0};
         char char_value = value.GetChar();
         sprintf(strchar, "\"%c\"", char_value);
-        buffer->UpdateSendBuffer(strbool);
+        buffer->UpdateSendBuffer(strchar);
     } else if (value.Type() == PropertyValue::NEO4J_Short
             || value.Type() == PropertyValue::NEO4J_Integer) {
         char strint[32] = {0};
@@ -63,12 +68,12 @@ void Node::AddProperty(std::string key, PropertyValue value)
         buffer->UpdateSendBuffer(strint);
     } else if (value.Type() == PropertyValue::NEO4J_Long) {
         char strlong[80] = {0};
-        int long_value = value.GetLong();
+        long long_value = value.GetLong();
         sprintf(strlong, "%ld", long_value);
         buffer->UpdateSendBuffer(strlong);
     } else if (value.Type() == PropertyValue::NEO4J_LongLong) {
         char strlonglong[96] = {0};
-        int longlong_value = value.GetLongLong();
+        long long longlong_value = value.GetLongLong();
         sprintf(strlonglong, "%lld", longlong_value);
         buffer->UpdateSendBuffer(strlonglong);
     } else if (value.Type() == PropertyValue::NEO4J_String) {
@@ -81,7 +86,7 @@ void Node::AddProperty(std::string key, PropertyValue value)
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
     http_headers = curl_slist_append(http_headers, header_content_type.c_str());
-    Net::DoRequest(HTTP_PUT, url, http_headers, buffer);
+    Net::DoRequest(HTTP_PUT, property_uri, http_headers, buffer);
     if (buffer->header_buffer()->code == 204);
     // clean ups.
     delete buffer;
@@ -97,7 +102,7 @@ void Node::ClearProperties()
     SessionBuffer *buffer = new SessionBuffer(0, 64);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_DELETE, url, http_headers, buffer);
+    Net::DoRequest(HTTP_DELETE, property_uri, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 204);
     delete buffer;
@@ -106,7 +111,7 @@ void Node::ClearProperties()
 
 const PropertyValue Node::GetProperty(std::string key) const
 {
-    if (key.length() == 0) return;
+    if (key.length() == 0) return PropertyValue();
 
     struct curl_slist *http_headers = NULL;
     std::string property_uri = self_uri_ + "/properties/" + key; 
@@ -115,7 +120,7 @@ const PropertyValue Node::GetProperty(std::string key) const
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_PUT, url, http_headers, buffer);
+    Net::DoRequest(HTTP_PUT, property_uri, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 200) {
         long long int_value = 0;
@@ -125,7 +130,7 @@ const PropertyValue Node::GetProperty(std::string key) const
         } else if (buffer->recv_buffer()->Data() == "false") {
             delete buffer;
             return PropertyValue(false);
-        } else if (Util::safe_strtol(buffer->recv_buffer()->Data().c_str(),
+        } else if (Util::safe_strtoll(buffer->recv_buffer()->Data(),
                     &int_value)) {
             delete buffer;
             return PropertyValue(int_value);
@@ -140,7 +145,7 @@ const PropertyValue Node::GetProperty(std::string key) const
 const PropertyValue& Node::GetProperty(std::string key,
             PropertyValue& default_value) const
 {
-    if (key.length() == 0) return;
+    if (key.length() == 0) return default_value;
 
     struct curl_slist *http_headers = NULL;
     std::string property_uri = self_uri_ + "/properties/" + key; 
@@ -149,7 +154,7 @@ const PropertyValue& Node::GetProperty(std::string key,
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_PUT, url, http_headers, buffer);
+    Net::DoRequest(HTTP_PUT, property_uri, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 200) {
         long long int_value = 0;
@@ -157,7 +162,7 @@ const PropertyValue& Node::GetProperty(std::string key,
             default_value.SetBool(true);
         } else if (buffer->recv_buffer()->Data() == "false") {
             default_value.SetBool(false);
-        } else if (Util::safe_strtol(buffer->recv_buffer()->Data().c_str(),
+        } else if (Util::safe_strtoll(buffer->recv_buffer()->Data(),
                     &int_value)) {
             default_value.SetInt(int_value);
         } else {
@@ -181,7 +186,7 @@ bool Node::HasProperty(std::string key) const
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_GET, url, http_headers, buffer);
+    Net::DoRequest(HTTP_GET, property_uri, http_headers, buffer);
     if (buffer->header_buffer()->code == 200) {
         ret = true;
     } else if (buffer->header_buffer()->code == 404) {
@@ -191,6 +196,11 @@ bool Node::HasProperty(std::string key) const
     delete buffer;
     curl_slist_free_all(http_headers);
     return ret;
+}
+
+Relationship CreateRelationshipTo(Node another, RelationshipType type)
+{
+    return Relationship();
 }
 
 void Node::RemoveProperty(std::string key)
@@ -204,7 +214,7 @@ void Node::RemoveProperty(std::string key)
     SessionBuffer *buffer = new SessionBuffer(0, 64);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_DELETE, url, http_headers, buffer);
+    Net::DoRequest(HTTP_DELETE, property_uri, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 204);
     delete buffer;

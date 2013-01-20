@@ -16,16 +16,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef _NEO4JCPP_UTIL_H_
-#define _NEO4JCPP_UTIL_H_
 
 #include <stdio.h>
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+
+#include "Util.h"
 
 namespace neo4jcpp {
 
@@ -149,9 +150,5 @@ bool Util::safe_strtol(const char *str, int32_t * out)
     return false;
 }
 
-};
-
 }
-
-#endif // _NEO4JCPP_UTIL_H_
 

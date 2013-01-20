@@ -23,6 +23,8 @@
 #include <vector>
 #include <string>
 
+#include "AbstractProperty.h"
+
 namespace neo4jcpp {
 class PropertyValue;
 
@@ -35,7 +37,7 @@ public:
     void AddProperty(std::string key, PropertyValue value);
 
     // Removes all of the mappings from this property map.
-    void Clear();
+    void ClearProperties();
 
     // Returns the PropertyValue to which the specified key
     // is mapped.
