@@ -13,6 +13,7 @@ SET(CORE_SRC
     PropertyValue.cc
     Relationship.cc
     RelationshipType.cc
+    Transaction.cc
     Util.cc
     )
 

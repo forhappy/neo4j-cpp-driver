@@ -1,0 +1,9 @@
+INCLUDE_DIRECTORIES(
+	${NEO4JCPP_BINARY_DIR}
+	${NEO4JCPP_SOURCE_DIR}/include/
+	${NEO4JCPP_SOURCE_DIR}/src/
+	)
+
+ADD_EXECUTABLE(graphdb graphdb.cc)
+TARGET_LINK_LIBRARIES(graphdb neo4jclient_static curl)
+

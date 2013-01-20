@@ -1,4 +1,4 @@
-/* Transaction class.
+/* graphdb testcase class.
  *
  * Copyright (c) 2012-2013 Fu Haiping <haipingf@gmail.com>
  *
@@ -16,14 +16,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef _NEO4JCPP_TRANSACTION_H_
-#define _NEO4JCPP_TRANSACTION_H_
 
-namespace neo4jcpp {
+#include <iostream>
+#include "Node.h"
+#include "Property.h"
+#include "PropertyValue.h"
+#include "GraphDatabase.h"
 
-class Transaction {
-};
+using namespace neo4jcpp;
 
+int main(int argc, const char *argv[])
+{
+    GraphDatabase graphdb("http://127.0.0.1:7474");
+    graphdb.Connect();
+    // PropertyValue value("hello");
+    // Property p;
+    // p.AddProperty("hi", value);
+    // Node node = graphdb.CreateNode(p);
+    Node node = graphdb.CreateNode();
+    std::cout << node.GetID() << std::endl;
+    std::cout << node.GetSelfURI() << std::endl;
+    return 0;
 }
-#endif // _NEO4JCPP_TRANSACTION_H_
-

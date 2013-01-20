@@ -31,8 +31,12 @@ class RelationshipType;
 class Node: public AbstractProperty {
 public:
     Node() {}
+    
+    explicit Node(const std::string self_uri)
+    { self_uri_ = self_uri; valid_ = true; }
+
     Node(const std::string id, const std::string self_uri)
-    { id_ = id; self_uri_ = self_uri; }
+    { id_ = id; self_uri_ = self_uri; valid_ = true; }
 
     // Associates the specified property value with
     // the specified key in this Property map.
@@ -81,15 +85,20 @@ public:
     inline void SetSelfURI(const std::string self_uri)
     { self_uri_ = self_uri; }
 
+    // Valid node or not
+    inline bool IsValid() const { return valid_; }
+
+    // Make this node valid;
+    inline bool SetValid()
+    { valid_ = true; }
+
     ~Node() {}
 
 private:
+    // Valid node or not.
+    bool valid_;
     std::string id_;
     std::string self_uri_;
-    
-    // No copying allowed
-    Node(const Node&);
-    void operator=(const Node&);
 };
 
 }

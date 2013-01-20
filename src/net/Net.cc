@@ -326,7 +326,8 @@ void Net::DoRequest(
         } else if (method  == HTTP_POST || method == HTTP_PUT) {
             // I added a duplicate PUT handler here for purpose.
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method.c_str());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, send_buffer->ptr_);
+            if (send_buffer->ptr_ != NULL)
+                curl_easy_setopt(curl, CURLOPT_POSTFIELDS, send_buffer->ptr_);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,
                     CurlCallback::RecvOperationCallbackPreAlloc);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);
@@ -341,8 +342,8 @@ void Net::DoRequest(
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_buffer);
         if (http_headers != NULL)
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, http_headers);
-        curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
-        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        // curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
+        // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }

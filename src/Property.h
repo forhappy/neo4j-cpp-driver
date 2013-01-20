@@ -57,6 +57,8 @@ public:
     // if it is present.
     void RemoveProperty(std::string key);
 
+    std::string Jsonfy();
+
 protected:
     std::map<std::string, PropertyValue> properties_;
 

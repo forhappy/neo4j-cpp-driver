@@ -23,6 +23,8 @@
 #include <vector>
 #include <string>
 
+#include "PropertyValue.h"
+
 namespace neo4jcpp {
 class PropertyValue;
 

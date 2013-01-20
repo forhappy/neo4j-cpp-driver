@@ -39,6 +39,7 @@ SET(CMAKE_C_FLAGS_RELEASE "-O2" CACHE
 CONFIGURE_FILE(config.h.cmake.in config.h)
 
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(example)
 
 # vim:tabstop=4:shiftwidth=4
 
