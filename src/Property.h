@@ -1,4 +1,4 @@
-/* Node class.
+/* Property class.
  *
  * Copyright (c) 2012-2013 Fu Haiping <haipingf@gmail.com>
  *
@@ -16,27 +16,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef _NEO4JCPP_NODE_H_
-#define _NEO4JCPP_NODE_H_
+#ifndef _NEO4JCPP_PROPERTY_H_
+#define _NEO4JCPP_PROPERTY_H_
+
+#include <map>
+#include <vector>
+#include <string>
 
 namespace neo4jcpp {
-
 class PropertyValue;
-class Relationship;
-class RelationshipType;
 
-class Node: public AbstractProperty {
+class Property: public AbstractProperty {
 public:
-    Node() {}
-    Node(const std::string id, const std::string self_uri)
-    { id_ = id; self_uri_ = self_uri; }
+    Property() {}
 
     // Associates the specified property value with
     // the specified key in this Property map.
     void AddProperty(std::string key, PropertyValue value);
 
     // Removes all of the mappings from this property map.
-    void ClearProperties();
+    void Clear();
 
     // Returns the PropertyValue to which the specified key
     // is mapped.
@@ -56,40 +55,16 @@ public:
     // if it is present.
     void RemoveProperty(std::string key);
 
-    // Create a relationship between this node and another node.
-    Relationship CreateRelationshipTo(Node another, RelationshipType type);
-
-    // Delete this node if it has no relationships attached to it.
-    void Delete();
-
-    // Returns the unique id of this node.
-    inline const std::string GetID() const
-    { return id_; }
-
-    // Get self URI.
-    inline const std::string GetSelfURI() const
-    { return self_uri_; }
-
-    // Set ID.
-    inline void SetID(const std::string id)
-    { id_ = id; }
-
-    // Set self URI.
-    inline void SetSelfURI(const std::string self_uri)
-    { self_uri_ = self_uri; }
-
-    ~Node() {}
+protected:
+    std::map<std::string, PropertyValue> properties_;
 
 private:
-    std::string id_;
-    std::string self_uri_;
-    
     // No copying allowed
-    Node(const Node&);
-    void operator=(const Node&);
+    // Property(const Property&);
+    // void operator=(const Property&);
 };
 
 }
 
-#endif // _NEO4JCPP_NODE_H_
+#endif // _NEO4JCPP_PROPERTY_H_
 

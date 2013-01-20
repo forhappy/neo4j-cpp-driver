@@ -303,13 +303,6 @@ void Net::DoRequest(
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, static_cast<CURLoption>(CURL_HTTP_VERSION_1_1), 1L);
         if (method == HTTP_GET) {
-            // NOTE: when doing GET, SessionBuffer must be initialized with
-            // the following arguments:
-            //
-            //     SessionBuffer *buffer = new SessionBuffer(size, 0),
-            //
-            // that is, recv_buffer_ has to be initialized with 0 in size.
-            //
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,
                     CurlCallback::RecvOperationCallbackDynAlloc);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, recv_buffer);

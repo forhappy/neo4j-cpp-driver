@@ -23,15 +23,53 @@
 
 namespace neo4jcpp {
 
+class Node;
+class Transaction;
+class Relationship;
+
 class GraphDatabase {
 
 public:
-    Node CreateNode();
+    // Construct a restful GraphDatabase instance using the specified url;
+    explicit GraphDatabase(std::string url);
+
+    // Construct a restful GraphDatabase instance using the specified url
+    // and port;
+    GraphDatabase(std::string url, std::string port);
+
+    // Starts a new transaction and associates it with the current thread.
+    Transaction BeginTx();
+
+    // Create a new node.
+    Node CreateNode(void);
+
+    // Looks up a node by id, please note: Neo4j reuses its internal ids
+    // when nodes and relationships are deleted, which means it's bad practice 
+    // to refer to them this way, use the application generated ids instead.
+    Node GetNodeByID(uint32_t id);
+
+    // Looks up a relationship by id, please note: Neo4j reuses its internal ids
+    // when nodes and relationships are deleted, which means it's bad practice 
+    // to refer to them this way, use the application generated ids instead.
+    Relationship GetRelationshipByID(uint32_t id);
+
+    // Get the server root.
+    inline const std::string GraphDatabaseURI() const
+    { return graphdb_uri_; }
+
+    // Get the server port.
+    inline const std::string GraphDatabasePort() const
+    { return port_; }
+
+    ~GraphDatabase() {}
 
 private:
-    std::string url_;
+    std::string graphdb_uri_;
     std::string port_;
-
+    
+    // No copying allowed
+    GraphDatabase(const GraphDatabase&);
+    void operator=(const GraphDatabase&);
 };
 
 }
