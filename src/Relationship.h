@@ -22,7 +22,74 @@
 
 namespace neo4jcpp {
 
-class Relationship {
+class Relationship: public AbstractProperty {
+public:
+    Relationship() {}
+    
+    explicit Relationship(const std::string self_uri)
+    { self_uri_ = self_uri; valid_ = true; }
+
+    Relationship(const std::string id, const std::string self_uri)
+    { id_ = id; self_uri_ = self_uri; valid_ = true; }
+
+    // Associates the specified property value with
+    // the specified key in this Property map.
+    void AddProperty(std::string key, PropertyValue value);
+
+    // Removes all of the mappings from this property map.
+    void ClearProperties();
+
+    // Returns the PropertyValue to which the specified key
+    // is mapped.
+    const PropertyValue GetProperty(std::string key) const;
+    
+    // Returns the PropertyValue to which the specified key
+    // is mapped, default_value will be returned if no property
+    // was associated with the given key.
+    const PropertyValue& GetProperty(std::string key,
+            PropertyValue& default_value) const;
+
+    // Returns true if this property map contains a mapping
+    // for the specified key.
+    bool HasProperty(std::string key) const;
+
+    // Remove the mapping for a key from this Property map
+    // if it is present.
+    void RemoveProperty(std::string key);
+    
+    // Delete this relationship if it has no relationships attached to it.
+    void Delete();
+
+    // Returns the unique id of this relationship.
+    inline const std::string GetID() const
+    { return id_; }
+
+    // Get self URI.
+    inline const std::string GetSelfURI() const
+    { return self_uri_; }
+
+    // Set ID.
+    inline void SetID(const std::string id)
+    { id_ = id; }
+
+    // Set self URI.
+    inline void SetSelfURI(const std::string self_uri)
+    { self_uri_ = self_uri; }
+
+    // Valid relationship or not
+    inline bool IsValid() const { return valid_; }
+
+    // Make this relationship valid;
+    inline bool SetValid()
+    { valid_ = true; }
+
+    ~Relationship() {}
+
+private:
+    // Valid relationship or not.
+    bool valid_;
+    std::string id_;
+    std::string self_uri_;
 };
 
 }

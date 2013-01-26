@@ -109,6 +109,21 @@ void Node::ClearProperties()
     return;
 }
 
+void Node::Delete()
+{
+    struct curl_slist *http_headers = NULL;
+    std::string header_accept = "Accept: application/json";
+
+    SessionBuffer *buffer = new SessionBuffer(0, 64);
+
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    Net::DoRequest(HTTP_DELETE, self_uri_, http_headers, buffer);
+    curl_slist_free_all(http_headers);
+    if (buffer->header_buffer()->code == 204);
+    delete buffer;
+    return;
+}
+
 const PropertyValue Node::GetProperty(std::string key) const
 {
     if (key.length() == 0) return PropertyValue();

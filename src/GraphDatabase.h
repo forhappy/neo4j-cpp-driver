@@ -53,6 +53,9 @@ public:
     // Create a new node.
     Node CreateNode(Property property);
 
+    Relationship CreateRelationship(const Node& start, const Node& end,
+            RelationshipType type);
+
     // Looks up a node by id, please note: Neo4j reuses its internal ids
     // when nodes and relationships are deleted, which means it's bad practice 
     // to refer to them this way, use the application generated ids instead.
@@ -78,6 +81,7 @@ private:
     std::string management_uri_;
 
     std::string node_uri_;
+    std::string relationship_uri_;
     std::string reference_node_uri_;
     std::string node_index_uri_;
     std::string relationship_index_uri_;

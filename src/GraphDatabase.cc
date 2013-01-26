@@ -39,7 +39,7 @@ bool GraphDatabase::ParseServerRoot(const std::string& response,
 {
     Document document;
     if (document.Parse<0>(response.c_str()).HasParseError())
-		return false;
+        return false;
     if (document.HasMember("management")
             && document.HasMember("data")) {
         management_uri = document["management"].GetString();
@@ -57,7 +57,7 @@ bool GraphDatabase::ParseServerRoot(const std::string& response,
 {
     Document document;
     if (document.Parse<0>(response.c_str()).HasParseError())
-		return false;
+        return false;
     if (document.HasMember("node")
             && document.HasMember("reference_node")
             && document.HasMember("node_index")
@@ -86,7 +86,7 @@ bool GraphDatabase::ParseNodeURI(const std::string& response,
 {
     Document document;
     if (document.Parse<0>(response.c_str()).HasParseError())
-		return false;
+        return false;
     if (document.HasMember("self")) {
         node_uri = document["self"].GetString();
         return true;
@@ -99,7 +99,7 @@ bool GraphDatabase::ParseNodeURI(const std::string& response,
 {
     Document document;
     if (document.Parse<0>(response.c_str()).HasParseError())
-		return false;
+        return false;
     if (document.HasMember("self")) {
         node_uri = document["self"].GetString();
         size_t last_slash_pos = node_uri.find_last_of("/");
@@ -126,6 +126,7 @@ bool GraphDatabase::Connect()
                     management_uri_, data_uri_)) {
             ret = true;
             node_uri_ = data_uri_ + "node";
+            relationship_uri_ = data_uri_ + "relationship";
             reference_node_uri_ = "";
             node_index_uri_ = data_uri_ + "index/node";
             relationship_index_uri_ = data_uri_ + "index/relationship";
@@ -163,7 +164,10 @@ bool GraphDatabase::ConnectEx()
                             node_uri_, reference_node_uri_,
                             node_index_uri_, relationship_index_uri_,
                             extensions_info_uri_, relationship_types_uri_,
-                            batch_uri_, cypher_uri_, neo4j_version_)) ret = true;
+                            batch_uri_, cypher_uri_, neo4j_version_)) {
+                    ret = true;
+                    relationship_uri_ = data_uri_ + "relationship";
+                }
             }
         }
     }
@@ -251,6 +255,23 @@ Node GraphDatabase::GetNodeByID(const std::string& id)
 
 Relationship GraphDatabase::GetRelationshipByID(const std::string& id)
 {
+    struct curl_slist *http_headers = NULL;
+    std::string header_accept = "Accept: application/json";
+    std::string relationship = relationship_uri_ + "/" + id;
+
+    SessionBuffer *buffer = new SessionBuffer(0, 0);
+
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    Net::DoRequest(HTTP_GET, relationship, http_headers, buffer);
+    curl_slist_free_all(http_headers);
+    if (buffer->header_buffer()->code == 200) {
+        std::string relationship_uri, relationship_id;
+        if (ParseNodeURI(buffer->recv_buffer()->Data(),
+                    relationship_uri, relationship_id)) {
+            return Relationship(relationship_uri, relationship_id);
+        }
+    } else return Relationship();
+
     return Relationship();
 }
 
