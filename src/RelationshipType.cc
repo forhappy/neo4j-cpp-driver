@@ -1,4 +1,4 @@
-/* Relationship class.
+/* RelationshipType class.
  *
  * Copyright (c) 2012-2013 Fu Haiping <haipingf@gmail.com>
  *
@@ -16,4 +16,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+#include "RelationshipType.h"
 
+namespace neo4jcpp {
+
+void RelationshipType::Register(std::string type_name)
+{
+
+}
+
+const std::string Lookup(std::string type_name) const
+{
+
+}
+
+}
