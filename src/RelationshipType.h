@@ -19,17 +19,21 @@
 
 #ifndef _NEO4JCPP_RELATIONSHIPTYPE_H_
 #define _NEO4JCPP_RELATIONSHIPTYPE_H_
-#include <set>
 #include <string>
 
 namespace neo4jcpp {
 
 class RelationshipType {
 public:
-    virtual void Register(std::string type_name);
-    virtual const std::string Lookup(std::string type_name) const;
-protected:
-    std::set<std::string> types_;
+    RelationshipType() {}
+    RelationshipType(std::string type): type_(type) {}
+    ~RelationshipType() {}
+    void SetType(std::string type)
+    { type_ = type; }
+    const std::string Type() const
+    { return type_; }
+private:
+    std::string type_;
 
 };
 

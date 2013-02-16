@@ -248,7 +248,7 @@ Node GraphDatabase::GetNodeByID(const std::string& id)
         std::string node_uri, node_id;
         if (ParseNodeURI(buffer->recv_buffer()->Data(),
                     node_uri, node_id)) {
-            return Node(node_uri, node_id);
+            return Node(node_id, node_uri);
         }
     } else return Node();
 }
@@ -268,7 +268,7 @@ Relationship GraphDatabase::GetRelationshipByID(const std::string& id)
         std::string relationship_uri, relationship_id;
         if (ParseNodeURI(buffer->recv_buffer()->Data(),
                     relationship_uri, relationship_id)) {
-            return Relationship(relationship_uri, relationship_id);
+            return Relationship(relationship_id, relationship_uri);
         }
     } else return Relationship();
 

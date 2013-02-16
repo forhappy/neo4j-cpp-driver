@@ -7,3 +7,6 @@ INCLUDE_DIRECTORIES(
 ADD_EXECUTABLE(graphdb graphdb.cc)
 TARGET_LINK_LIBRARIES(graphdb neo4jclient_static curl)
 
+ADD_EXECUTABLE(node-GetProperty node-GetProperty.cc)
+TARGET_LINK_LIBRARIES(node-GetProperty neo4jclient_static curl)
+

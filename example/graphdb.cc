@@ -29,11 +29,11 @@ int main(int argc, const char *argv[])
 {
     GraphDatabase graphdb("http://127.0.0.1:7474");
     graphdb.Connect();
-    // PropertyValue value("hello");
-    // Property p;
-    // p.AddProperty("hi", value);
-    // Node node = graphdb.CreateNode(p);
-    Node node = graphdb.CreateNode();
+    PropertyValue value("hello");
+    Property p;
+    p.AddProperty("hi", value);
+    Node node = graphdb.CreateNode(p);
+    // Node node = graphdb.CreateNode();
     std::cout << node.GetID() << std::endl;
     std::cout << node.GetSelfURI() << std::endl;
     return 0;

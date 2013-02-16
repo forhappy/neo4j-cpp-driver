@@ -135,7 +135,7 @@ const PropertyValue Node::GetProperty(std::string key) const
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_PUT, property_uri, http_headers, buffer);
+    Net::DoRequest(HTTP_GET, property_uri, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 200) {
         long long int_value = 0;
@@ -169,7 +169,7 @@ const PropertyValue& Node::GetProperty(std::string key,
     SessionBuffer *buffer = new SessionBuffer(0, 0);
 
     http_headers = curl_slist_append(http_headers, header_accept.c_str());
-    Net::DoRequest(HTTP_PUT, property_uri, http_headers, buffer);
+    Net::DoRequest(HTTP_GET, property_uri, http_headers, buffer);
     curl_slist_free_all(http_headers);
     if (buffer->header_buffer()->code == 200) {
         long long int_value = 0;
