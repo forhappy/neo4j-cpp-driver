@@ -231,4 +231,16 @@ void Relationship::RemoveProperty(std::string key)
     return;
 }
 
+RelationshipType Relationship::GetRelationshipType() const
+{
+    return relationshi_type_;
+}
+
+bool Relationship::IsRelationshipType(RelationshipType type) const
+{
+    if (type.Type() == relationshi_type_.Type())
+        return true;
+    else return false;
+}
+
 }

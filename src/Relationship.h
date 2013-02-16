@@ -20,6 +20,8 @@
 #ifndef _NEO4JCPP_RELATIONSHIP_H_
 #define _NEO4JCPP_RELATIONSHIP_H_
 
+#include "RelationshipType.h"
+
 namespace neo4jcpp {
 
 class Relationship: public AbstractProperty {
@@ -31,6 +33,13 @@ public:
 
     Relationship(const std::string id, const std::string self_uri)
     { id_ = id; self_uri_ = self_uri; valid_ = true; }
+
+    Relationship(const std::string id, const std::string self_uri,
+            const Node& start_node, const Node& end_node,
+            const RelationshipType& relationshi_type)
+        : id_(id), self_uri_(self_uri),
+        start_node_(start_node), end_node_(end_node),
+        relationshi_type_(relationshi_type) {}
 
     // Associates the specified property value with
     // the specified key in this Property map.
@@ -83,13 +92,31 @@ public:
     inline bool SetValid()
     { valid_ = true; }
 
+    Node GetStartNode() const { return start_node_; }
+    Node GetEndNode() const { return end_node_; }
+    Node GetOtherNode(Node node) const
+    {
+        if (node.GetID() == start_node_.GetID())
+            return start_node_;
+        else
+            return end_node_;
+    }
+
     ~Relationship() {}
+    
+    RelationshipType GetRelationshipType() const;
+    
+    bool IsRelationshipType(RelationshipType type) const;
+
 
 private:
     // Valid relationship or not.
     bool valid_;
     std::string id_;
     std::string self_uri_;
+    Node start_node_;
+    Node end_node_;
+    RelationshipType relationshi_type_;
 };
 
 }

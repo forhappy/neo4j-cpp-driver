@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include <string>
+#include <iostream>
 
 #include <curl/curl.h>
 
@@ -213,8 +214,27 @@ bool Node::HasProperty(std::string key) const
     return ret;
 }
 
-Relationship CreateRelationshipTo(Node another, RelationshipType type)
+Relationship Node::CreateRelationshipTo(Node another, RelationshipType type)
 {
+    std::string json;
+    std::string post_uri = self_uri_ + "/relationships";
+    struct curl_slist *http_headers = NULL;
+    std::string header_content_type = "Content-Type: application/json";
+    std::string header_accept = "Accept: application/json";
+
+    json = "{\"to\":\"" + another.GetSelfURI() + "\",\"type\":\""
+        + type.Type() + "\"}";
+
+    SessionBuffer *buffer = new SessionBuffer(0, 1024 * 128);
+    buffer->UpdateSendBuffer(json.c_str());
+
+    http_headers = curl_slist_append(http_headers, header_accept.c_str());
+    http_headers = curl_slist_append(http_headers, header_content_type.c_str());
+    Net::DoRequest(HTTP_POST, post_uri, http_headers, buffer);
+    curl_slist_free_all(http_headers);
+    if (buffer->header_buffer()->code == 201) {
+        std::cout << buffer->recv_buffer()->Data() << std::endl;
+    }
     return Relationship();
 }
 

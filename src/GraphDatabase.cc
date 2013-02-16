@@ -229,9 +229,7 @@ Node GraphDatabase::CreateNode(Property property)
         delete buffer;
         return Node();
     }
-
 }
-
 
 Node GraphDatabase::GetNodeByID(const std::string& id)
 {
